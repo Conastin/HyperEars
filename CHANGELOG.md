@@ -13,6 +13,13 @@
   界面按 Adapter 发布的状态呈现，移除界面本地目标和延迟恢复计时器。
 - 卡片保持原生标题测量和统一开关状态投影；“停止厂商应用”从控制 App 目录生成完整包名列表。
 
+### MOONDROP MIRAGE
+
+- 新增 MIRAGE 左右耳与充电盒电量，以及降噪、关闭、通透控制，收到有效协议响应后逐项开放。
+- 与 Pudding 共用会话和有界状态校正，各设备状态独立。原版握手、电量和三态读写已有实测；
+  维护版实机复核及自适应降噪命令证据继续跟踪。
+  详见 [MOONDROP MIRAGE 协议适配](docs/moondrop-mirage-protocol.md)。
+
 ### 设备识别
 
 - 补充 `Space Travel 2 Ultra` 的精确名称，归入水月雨家族；保留系统整机电量、音量与流转，
@@ -22,15 +29,6 @@
 
 - 更新 Android Gradle Plugin 至 9.4.1、Kotlin 至 2.4.20、Navigation Compose 至 2.10.2。
 - 更新 Miuix 至 0.9.4、DexKit 至 2.3.0，以及构建工作流的 setup-java 至 6.0.1。
-
-### MOONDROP MIRAGE
-
-- 接入 MOONDROP MIRAGE 适配：品牌与型号名称选择候选 Adapter，共用 Pudding 的会话与
-  有界状态处理，严格握手与逐项合法响应确认后才
-  开放电量和噪声能力。2026-09-21 实机会话已确认握手、私有左右耳与充电盒电量及噪声三态
-  读写；「降噪」写入实测落在设备基础降噪档，自适应降噪档的帧字节待实机抓包补充，
-  最终维护版仍待实机复核。
-  协议与证据分层见 [MOONDROP MIRAGE 协议适配](docs/moondrop-mirage-protocol.md)。
 
 ## [2.7.0] - 2026-09-08
 

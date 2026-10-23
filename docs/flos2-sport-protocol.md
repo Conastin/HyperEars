@@ -112,7 +112,9 @@ AE | primary | sub | payloadLength | payload[payloadLength] | CRC16 LE
 设置后通过统一回读流程重新查询全量状态，只在收到合法设备状态时更新卡片状态。
 
 音效不是 MiLink 原生噪声三态的一部分，以 `flos2.sound_effect` 专属状态承载，仅在状态帧
-确认后开放。
+确认后开放。卡片呈现复用 MiLink 原生模式卡槽位（与 FitClip Ultra 游戏模式同款机制）：
+标题替换为"音效"，三个原生项临时替换为四个同原生类项（标准/游泳/人声/增强），解绑时
+恢复原项。
 
 ## 7. 能力与失败回退
 

@@ -65,6 +65,17 @@ open class FloS2SportGattAdapter(
     override val displayName: String = "FloS2 sport earbud family"
     override val privateProtocolRequired: Boolean = true
     override val transportReadiness: TransportReadiness = TransportReadiness.PROTOCOL_HANDSHAKE
+
+    /**
+     * Carries the sound-effect selector on MiLink's native mode-slot card. The presentation is
+     * deliberately absent until a status frame confirms the sound-effect feature, mirroring the
+     * capability gating of every private feature.
+     */
+    override val miLinkCardPresentationId: MiLinkCardPresentationId?
+        get() = FloS2MiLinkPresentationIds.SOUND_EFFECT.takeIf {
+            runtimeState().features.get<FloS2SoundEffectFeatureState>() != null
+        }
+
     override val transports: List<EarbudTransportSpec> = listOf(
         GattTransportSpec(
             serviceUuid = SERVICE_UUID,

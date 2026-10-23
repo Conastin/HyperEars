@@ -130,6 +130,22 @@ class FloS2EarbudAdapterTest {
     }
 
     @Test
+    fun soundEffectPresentationAppearsOnlyAfterProtocolEvidence() {
+        val adapter = TheAstroOpenProS2Adapter()
+
+        assertNull(adapter.miLinkCardPresentationId)
+
+        adapter.receive(STATUS_STANDARD.hexBytes())
+        assertEquals(
+            FloS2MiLinkPresentationIds.SOUND_EFFECT,
+            adapter.miLinkCardPresentationId,
+        )
+
+        adapter.resetProtocolSession()
+        assertNull(adapter.miLinkCardPresentationId)
+    }
+
+    @Test
     fun failedPublicProtocolProbeFallsBackDirectlyToStandardIntegration() {
         val resolution = FloS2SportGattAdapter().resolveInitialProtocolFailure()
 

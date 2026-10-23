@@ -43,3 +43,8 @@ sealed interface FloS2ControlRequest : ControlRequest {
         val effect: FloS2SoundEffect,
     ) : FloS2ControlRequest
 }
+
+object FloS2MiLinkPresentationIds {
+    /** Native mode-slot carrier repurposed for the four-way sound-effect selector. */
+    val SOUND_EFFECT = MiLinkCardPresentationId("flos2-sound-effect")
+}

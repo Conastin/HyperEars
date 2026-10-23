@@ -438,20 +438,12 @@ internal open class NativeAncToggleMiLinkCardAdapter(
     }
 
     private fun resolveSelectAncCard(root: View): TitleAncCard? {
-        val selectTitle = root.findMiLinkView(SELECT_ANC_CARD_TITLE_ID) as? TextView ?: return null
-        val selectCard = root.findMiLinkView(SELECT_ANC_CARD_ID) as? LinearLayout ?: return null
-        if (selectCard.javaClass.name != SELECT_ANC_CARD_CLASS) return null
-        if (selectCard.childCount != NATIVE_MODE_COUNT) return null
-        if ((0 until selectCard.childCount).any { index ->
-                selectCard.getChildAt(index).javaClass.name != SELECT_ANC_ITEM_CLASS
-            }
-        ) {
-            return null
-        }
+        val row = NativeAncModeRow.resolve(root, NativeAncModeLayout.SELECT_CARD) ?: return null
+        val selectTitle = root.findMiLinkView(row.layout.titleId) as? TextView ?: return null
         return TitleAncCard(
             generation = NativeAncCardGeneration.SELECT_CARD,
             title = selectTitle,
-            container = selectCard,
+            container = row.container,
         )
     }
 
@@ -502,13 +494,6 @@ internal open class NativeAncToggleMiLinkCardAdapter(
         const val ORIGINAL_ANC_ITEM_TITLE_ID = "anc_title"
         const val ORIGINAL_ANC_ITEM_CLASS =
             "com.miui.circulate.world.headset.ui.HeadsetControlAncItemView"
-        const val SELECT_ANC_CARD_TITLE_ID = "anc_card_text"
-        const val SELECT_ANC_CARD_ID = "anc_select_card"
-        const val SELECT_ANC_CARD_CLASS =
-            "com.miui.circulate.world.headset.ui.HeadsetSelectCardView"
-        const val SELECT_ANC_ITEM_CLASS =
-            "com.miui.circulate.world.headset.ui.HeadsetSelectItemView"
-        const val NATIVE_MODE_COUNT = 3
         const val MIUIX_SLIDING_BUTTON = "miuix.slidingwidget.widget.SlidingButton"
         const val LABEL_END_PADDING_DP = 8
         const val EMBEDDED_HEADER_HEIGHT_DP = 48

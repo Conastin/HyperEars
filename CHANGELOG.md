@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+### Bose 卡片
+
+- 修复新版 MiLink 原生选择卡片中 Bose 抗风噪入口缺失：QuietComfort Headphones 使用
+  “降噪 / 抗风噪 / 通透”，QC35 / QC35 II 使用“降噪 / 关闭 / 抗风噪”。
+- 两态 Bose 卡片在新旧布局中均禁用不支持的“关闭”项；解绑时恢复原生控件及布局。
+  此项已覆盖布局契约与模式映射测试，实际渲染仍待设备复核。
+
 ### Samsung Galaxy Buds
 
 - 新增 Galaxy Buds 家族候选及电量、噪声和触控协议，私有能力按有效设备回报逐项开放。

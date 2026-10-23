@@ -1,8 +1,12 @@
 package dev.hyperears.hook
 
+import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import dev.hyperears.bridge.ModuleContract
 import dev.hyperears.integration.EarbudState
 import dev.hyperears.integration.FloS2ControlRequest
 import dev.hyperears.integration.FloS2MiLinkPresentationIds
@@ -39,7 +43,7 @@ internal object FloS2SoundEffectMiLinkCardAdapter : MiLinkCardAdapter {
             ?: return skipped(address, "native-anc-card-unavailable")
         val items = FloS2SoundEffect.entries.mapIndexed { index, effect ->
             val source = host.sources[index % host.sources.size]
-            host.createItem(root, source, EFFECT_LABELS.getValue(effect), source)
+            host.createItem(root, source, EFFECT_LABELS.getValue(effect), effectIcon(root.context, effect))
                 ?: return skipped(address, "sound-effect-item-construction-failed")
         }
 
@@ -78,9 +82,10 @@ internal object FloS2SoundEffectMiLinkCardAdapter : MiLinkCardAdapter {
             val views = items.mapNotNull(WeakReference<View>::get)
             if (views.size != this.items.size) return
             val projected = FloS2SoundEffectCardPolicy.render(state)
-            views.forEach { it.setNativeChoiceEnabled(projected.enabled) }
             views.forEachIndexed { index, view ->
-                view.setSelectedTree(FloS2SoundEffect.entries[index] == projected.effect)
+                val selected = FloS2SoundEffect.entries[index] == projected.effect
+                view.setNativeChoiceEnabled(projected.enabled)
+                view.setSelectedTree(selected)
             }
             if (lastRendered != projected) {
                 lastRendered = projected
@@ -138,8 +143,12 @@ internal object FloS2SoundEffectMiLinkCardAdapter : MiLinkCardAdapter {
 
         private val replacements = mutableListOf<WeakReference<View>>()
 
-        fun createItem(root: View, source: View, label: String, iconSource: View = source): View? =
-            layout.createItem(root, source, label, iconSource)
+        fun createItem(root: View, source: View, label: String, icon: Drawable?): View? {
+            val item = layout.createItem(root, source, label) ?: return null
+            val drawable = icon ?: return item
+            (item.findMiLinkView(layout.itemIconId) as? ImageView)?.setImageDrawable(drawable)
+            return item
+        }
 
         fun install(titleText: String, items: List<View>) {
             val title = title.get() ?: return
@@ -185,6 +194,37 @@ internal object FloS2SoundEffectMiLinkCardAdapter : MiLinkCardAdapter {
             NativeAncHost(title, row)
         }
 
+    /**
+     * Loads a module-owned vector icon from the MiLink process. Falls back to the cloned host
+     * icon when the module package cannot be resolved or the resource is missing.
+     */
+    private fun effectIcon(context: Context, effect: FloS2SoundEffect): Drawable? = runCatching {
+        val moduleContext = moduleContext(context)
+            ?: return@runCatching null
+        val identifier = moduleContext.resources.getIdentifier(
+            EFFECT_ICON_NAMES.getValue(effect),
+            "drawable",
+            ModuleContract.MODULE_PACKAGE,
+        ).takeIf { it != 0 } ?: return@runCatching null
+        moduleContext.resources.getDrawable(identifier, null)
+    }.getOrElse {
+        ModuleLog.warn(COMPONENT, "FloS2 effect icon unavailable; using the host icon", it)
+        null
+    }
+
+    @Volatile
+    private var cachedModuleContext: Context? = null
+
+    private fun moduleContext(context: Context): Context? {
+        cachedModuleContext?.let { return it }
+        return runCatching {
+            context.createPackageContext(
+                ModuleContract.MODULE_PACKAGE,
+                Context.CONTEXT_IGNORE_SECURITY,
+            )
+        }.getOrNull()?.also { cachedModuleContext = it }
+    }
+
     private fun View.setNativeChoiceEnabled(enabled: Boolean) {
         isEnabled = enabled
         isClickable = enabled
@@ -204,6 +244,12 @@ internal object FloS2SoundEffectMiLinkCardAdapter : MiLinkCardAdapter {
         FloS2SoundEffect.SWIMMING to "游泳",
         FloS2SoundEffect.VOCALS to "人声",
         FloS2SoundEffect.ENHANCED to "增强",
+    )
+    private val EFFECT_ICON_NAMES = mapOf(
+        FloS2SoundEffect.STANDARD to "ic_flos2_effect_standard",
+        FloS2SoundEffect.SWIMMING to "ic_flos2_effect_swimming",
+        FloS2SoundEffect.VOCALS to "ic_flos2_effect_vocals",
+        FloS2SoundEffect.ENHANCED to "ic_flos2_effect_enhanced",
     )
     private const val ENABLED_ALPHA = 1.0f
     private const val DISABLED_ALPHA = 0.45f

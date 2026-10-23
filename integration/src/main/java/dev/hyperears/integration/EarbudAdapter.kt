@@ -608,6 +608,7 @@ object EarbudAdapterRegistry {
     private val sonyGroup = GroupMetadata("sony", "Sony")
     private val qcyGroup = GroupMetadata("qcy", "QCY")
     private val technicsGroup = GroupMetadata("technics", "Technics")
+    private val samsungGroup = GroupMetadata("samsung", "Samsung Galaxy Buds")
     private val standardGroup = GroupMetadata("standard", "标准蓝牙耳机")
 
     private val initialRegistrations: List<Registration> = buildList {
@@ -641,6 +642,7 @@ object EarbudAdapterRegistry {
         add(Registration(niceHckGroup, ::NiceHckEarbudAdapter))
         add(Registration(moondropGroup, ::MoondropPuddingAdapter))
         add(Registration(moondropGroup, ::MoondropRobinAdapter))
+        add(Registration(moondropGroup, ::MoondropMirageAdapter))
         add(Registration(moondropGroup, ::MoondropEarbudAdapter))
         add(Registration(honorGroup, ::HonorX5sProAdapter))
         add(Registration(huaweiGroup, ::HuaweiFreebuds5iAdapter))
@@ -651,6 +653,9 @@ object EarbudAdapterRegistry {
         add(Registration(qcyGroup, ::QcyCrosskyC50sAdapter))
         add(Registration(qcyGroup, ::QcyStandardGattAdapter))
         add(Registration(technicsGroup, ::TechnicsEarbudAdapter))
+        dev.hyperears.protocol.samsung.SamsungBudsCodec.Model.entries.forEach { model ->
+            add(Registration(samsungGroup) { SamsungBuds2ProAdapter(model) })
+        }
         // Apple devices are handled by the platform; keep AAP code available for explicit use,
         // but do not add Apple adapters to HyperEars' default matching chain.
         addAll(SonyAdapterRegistry.factories.map { Registration(sonyGroup, it) })
